@@ -10,8 +10,6 @@ Created on Fri Feb 19 13:42:06 2021
 import os
 os.chdir('/Users/operator/Documents')
 from nlpclass import *
-import matplotlib.pyplot as plt
-plt.xkcd()
 
 # Get
 df = pd.read_csv('/Users/operator/Documents/reddit_wsb.csv')
@@ -28,11 +26,16 @@ df1 = df[~df.pos.isna()]
 # LDA
 topic_modeling = topic_model(df1['pos'])
 
+# Build custom model
+df1['topic'] = build_lda(topic_modeling.corpus, topic_modeling.wordid, 12)
+df1['topic'].value_counts()
+
+# Get tsne
+t1, t2 = topic_modeling.get_signals()
+
 # Visualize
 fig, ax = plt.subplots(figsize = (10, 6))
-ax.plot([i for i in range(1, 20)], topic_modeling.scores)
-plt.xlabel('# Topics')
-plt.ylabel('Coherence')
-plt.title('Coherence Scores for LDA Topics')
-
-# Build optimal model
+ax.scatter(t1, t2, c = df1['topic'], s = 1)
+plt.xlabel('tSNE 1')
+plt.ylabel('tSNE 2')
+plt.title('tSNE Scores for LDA Topics')
