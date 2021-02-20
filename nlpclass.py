@@ -23,9 +23,12 @@ import gensim.corpora as corpora
 from gensim.models.coherencemodel import CoherenceModel
 from operator import itemgetter
 from sklearn.manifold import TSNE
+from textblob import TextBlob
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 stop_words = set(stopwords.words('english'))
 words = set(nltk.corpus.words.words())
+vader = SentimentIntensityAnalyzer()
 
 # NLP
 def process_txt(x):
@@ -131,3 +134,13 @@ class topic_model:
         tsne = TSNE(n_components = 2, random_state = 100).fit_transform(out)
 
         return tsne[:, 0], tsne[:, 1]
+    
+    # Function to get sentiment
+    def get_emotional_content(self, x):
+        
+        return TextBlob(x).sentiment.polarity
+    
+    def the_dark_side(self, x):
+        
+        return vader.polarity_scores(x)['compound']
+        
